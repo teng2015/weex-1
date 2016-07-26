@@ -221,6 +221,10 @@ class WXBridge implements IWXBridge {
    */
   public native int initFramework(String framework, WXParams params);
 
+
+  public native int evalJavaScript(String bundle);
+
+
   /**
    * Execute JavaScript function
    *

@@ -289,6 +289,11 @@ public class WXWebsocketBridge implements IWXBridge,WXWebSocketManager.JSDebugge
     }
 
     @Override
+    public int evalJavaScript(String bundle) {
+        return 0;
+    }
+
+    @Override
     public void reportJSException(String instanceId, String func, String exception) {
         if (mJsManager != null) {
             mJsManager.reportJSException(instanceId, func, exception);
