@@ -204,8 +204,8 @@
  */
 package com.taobao.weex.ui.component;
 
+import android.content.Context;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
@@ -224,7 +224,12 @@ import com.taobao.weex.utils.WXResourceUtils;
  * Image component
  */
 @Component(lazyload = false)
-public class WXImage extends WXComponent {
+public class WXImage extends WXComponent<ImageView> {
+
+    @Deprecated
+    public WXImage(WXSDKInstance instance, WXDomObject dom, WXVContainer parent, String instanceId, boolean isLazy) {
+        this(instance,dom,parent,isLazy);
+    }
 
     public WXImage(WXSDKInstance instance, WXDomObject node,
                    WXVContainer parent, boolean lazy) {
@@ -232,16 +237,11 @@ public class WXImage extends WXComponent {
     }
 
     @Override
-    protected void initView() {
-        mHost = new WXImageView(mContext, mDomObj);
-        ((ImageView) getView()).setScaleType(ScaleType.FIT_XY);
+    protected WXImageView initComponentHostView(Context context) {
+        WXImageView view = new WXImageView(mContext, mDomObj);
+        view.setScaleType(ScaleType.FIT_XY);
+        return view;
     }
-
-    @Override
-    public View getView() {
-        return super.getView();
-    }
-
 
     @Override
     @WXComponentProp(name = WXDomPropConstant.WX_BACKGROUNDCOLOR)
@@ -281,7 +281,7 @@ public class WXImage extends WXComponent {
 
     @WXComponentProp(name = WXDomPropConstant.WX_RESIZE_MODE)
     public void setResizeMode(String resizeMode) {
-        ((ImageView) getView()).setScaleType(getResizeMode(resizeMode));
+        ((ImageView) getHostView()).setScaleType(getResizeMode(resizeMode));
     }
 
     private ScaleType getResizeMode(String resizeMode) {
@@ -308,7 +308,7 @@ public class WXImage extends WXComponent {
 
     @WXComponentProp(name = WXDomPropConstant.WX_RESIZE)
     public void setResize(String resize) {
-        ((ImageView) getView()).setScaleType(getResizeMode(resize));
+        ((ImageView) getHostView()).setScaleType(getResizeMode(resize));
     }
 
     @WXComponentProp(name = WXDomPropConstant.WX_ATTR_SRC)
@@ -322,7 +322,7 @@ public class WXImage extends WXComponent {
 
         IWXImgLoaderAdapter imgLoaderAdapter = mInstance.getImgLoaderAdapter();
         if (imgLoaderAdapter != null) {
-            imgLoaderAdapter.setImage(src, ((ImageView) getView()),
+            imgLoaderAdapter.setImage(src, ((ImageView) getHostView()),
                     mDomObj.attr.getImageQuality(), imageStrategy);
         }
     }

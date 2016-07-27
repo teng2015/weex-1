@@ -204,6 +204,9 @@
  */
 package com.taobao.weex.ui.component;
 
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
 import com.taobao.weex.WXSDKInstance;
 import com.taobao.weex.common.Component;
 import com.taobao.weex.dom.WXDomObject;
@@ -213,22 +216,21 @@ import com.taobao.weex.ui.view.WXFrameLayout;
  * div component
  */
 @Component(lazyload = false)
-public class WXDiv extends WXVContainer {
+public class WXDiv extends WXVContainer<WXFrameLayout> {
+
+
+  @Deprecated
+  public WXDiv(WXSDKInstance instance, WXDomObject dom, WXVContainer parent, String instanceId, boolean isLazy) {
+    this(instance,dom,parent,isLazy);
+  }
 
   public WXDiv(WXSDKInstance instance, WXDomObject node, WXVContainer parent, boolean lazy) {
     super(instance, node, parent, lazy);
   }
 
   @Override
-  protected void initView() {
-    if(mContext!=null) {
-      mHost = new WXFrameLayout(mContext);
-    }
-  }
-
-  @Override
-  public WXFrameLayout getView() {
-    return (WXFrameLayout) super.getView();
+  protected WXFrameLayout initComponentHostView(Context context) {
+    return new WXFrameLayout(context);
   }
 
 }

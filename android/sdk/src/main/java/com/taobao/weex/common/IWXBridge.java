@@ -221,6 +221,15 @@ public interface IWXBridge extends IWXObject {
   int initFramework(String framework, WXParams params);
 
   /**
+   * execute js bundle
+   *
+   * @param bundle
+   * @return true if succeed
+   */
+  int evalJavaScript(String bundle);
+
+
+  /**
    * execute javascript function
    */
   int execJS(String instanceId, String namespace, String function, WXJSObject[] args);

@@ -131,6 +131,7 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -151,6 +152,7 @@ import com.taobao.weex.dom.WXDomObject;
 import com.taobao.weex.dom.flex.CSSLayout;
 import com.taobao.weex.dom.flex.Spacing;
 import com.taobao.weex.ui.IFComponentHolder;
+import com.taobao.weex.ui.component.list.WXCell;
 import com.taobao.weex.ui.component.list.WXListComponent;
 import com.taobao.weex.ui.view.WXBackgroundDrawable;
 import com.taobao.weex.ui.view.WXCircleIndicator;
@@ -176,12 +178,12 @@ import java.util.Set;
  * abstract component
  *
  */
-public abstract class WXComponent implements IWXObject, IWXActivityStateListener {
+public abstract class  WXComponent<T extends View> implements IWXObject, IWXActivityStateListener {
 
   public static final int HORIZONTAL = 0;
   public static final int VERTICAL = 1;
   public static int mComponentNum = 0;
-  public View mHost;
+  public T mHost;
   public volatile WXVContainer mParent;
   public volatile WXDomObject mDomObj;
   public String mInstanceId;
@@ -277,15 +279,15 @@ public abstract class WXComponent implements IWXObject, IWXActivityStateListener
 
     mDomObj = domObject;
 
-    if (this instanceof WXRefresh && mParent instanceof WXRefreshableContainer &&
-        isOuterRefreshableContainer(mParent)) {
+    if (this instanceof WXRefresh && mParent instanceof WXScroller &&
+            hasScrollParent(mParent)) {
       mInstance.setRefreshMargin(mDomObj.csslayout.dimensions[CSSLayout.DIMENSION_HEIGHT]);
     }
-    if ((this instanceof WXBaseRefresh && mParent instanceof WXRefreshableContainer)) {
+    if ((this instanceof WXBaseRefresh && mParent instanceof WXScroller)) {
       return;
     }
 
-    if (mParent instanceof WXRefreshableContainer && isOuterRefreshableContainer(mParent)) {
+    if (mParent instanceof WXScroller && hasScrollParent(mParent)) {
       if (!(this instanceof WXBaseRefresh)) {
           CSSLayout newLayout = new CSSLayout();
           newLayout.copy(mDomObj.csslayout);
@@ -362,6 +364,14 @@ public abstract class WXComponent implements IWXObject, IWXActivityStateListener
 //      params.width = realWidth;
 //      params.height = realHeight;
 //      mHost.setLayoutParams(params);
+    } else if (mParent.getRealView() instanceof BounceRecyclerView && this instanceof WXCell) {
+      RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) mHost.getLayoutParams();
+      if (params == null)
+        params = new RecyclerView.LayoutParams(realWidth,realHeight);
+      params.width = realWidth;
+      params.height = realHeight;
+      params.setMargins(realLeft, 0, realRight, 0);
+      mHost.setLayoutParams(params);
     } else if (mParent.getRealView() instanceof FrameLayout) {
       FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(realWidth, realHeight);
       params.setMargins(realLeft, realTop, realRight, realBottom);
@@ -374,10 +384,6 @@ public abstract class WXComponent implements IWXObject, IWXActivityStateListener
       ScrollView.LayoutParams params = new ScrollView.LayoutParams(realWidth, realHeight);
       params.setMargins(realLeft, realTop, realRight, realBottom);
       mHost.setLayoutParams(params);
-    } else if (mParent.getRealView() instanceof BounceRecyclerView) {
-//      RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(realWidth, realHeight);
-//      params.setMargins(realLeft, 0, realRight, 0);
-//      mHost.setLayoutParams(params);
     }
 
     mPreRealWidth = realWidth;
@@ -593,20 +599,56 @@ public abstract class WXComponent implements IWXObject, IWXActivityStateListener
   }
 
   protected void createViewImpl(WXVContainer parent, int index) {
-    initView();
-    if (parent != null) {
-      parent.addSubView(mHost, index);
+    if (mContext != null) {
+      mHost = initComponentHostView(mContext);
+      if (mHost == null) {
+        //compatible
+        initView();
+      }
+      onHostViewInitialized(mHost);
+      if (parent != null) {
+        parent.addSubView(mHost, index);
+      }
+      getOrCreateBorder().attachView(mHost);
+    }else{
+      WXLogUtils.e("createViewImpl","Context is null");
     }
-    getOrCreateBorder().attachView(mHost);
   }
 
+  /**
+   * Use {@link #initComponentHostView(Context context)} instead.
+   */
+  @Deprecated
   protected void initView() {
-    if(mContext!=null) {
-      mHost = new FrameLayout(mContext);
-    }
+    if (mContext != null)
+      mHost = initComponentHostView(mContext);
   }
 
-  public View getView() {
+  protected T initComponentHostView(Context context){
+    /**
+     * compatible old initView
+     * TODO: change to abstract method in next V1.0 .
+     */
+    return null;
+  }
+
+  /**
+   * After view init.
+   */
+  protected void onHostViewInitialized(T host){
+
+  }
+
+  public T getHostView() {
+    return mHost;
+  }
+
+  /**
+   * use {@link #getHostView()} instead
+   * @return
+   */
+  @Deprecated
+  public View getView(){
     return mHost;
   }
 
@@ -677,12 +719,16 @@ public abstract class WXComponent implements IWXObject, IWXActivityStateListener
       return;
     }
 
-    if (mDomObj.isSticky()) {
+    if (isSticky()) {
       Scrollable scroller = getParentScroller();
       if (scroller != null) {
         scroller.unbindStickStyle(this);
       }
     }
+  }
+
+  public boolean isSticky() {
+    return mDomObj.style == null ? false : mDomObj.style.isSticky();
   }
 
   @WXComponentProp(name = WXDomPropConstant.WX_ATTR_DISABLED)
@@ -897,7 +943,7 @@ public abstract class WXComponent implements IWXObject, IWXActivityStateListener
 
   /**
    * Detach view from its component. Components,
-   * which have difference between getView and getRealView or have temp calculation results,
+   * which have difference between getHostView and getRealView or have temp calculation results,
    * must<strong> override</strong>  this method with their own implementation.
    *
    * @return the original View
@@ -956,13 +1002,13 @@ public abstract class WXComponent implements IWXObject, IWXActivityStateListener
     public int height;
   }
 
-  public boolean isOuterRefreshableContainer(WXComponent component) {
+  public boolean hasScrollParent(WXComponent component) {
     if (component.getParent() == null) {
       return true;
-    } else if (component.getParent() instanceof WXRefreshableContainer) {
+    } else if (component.getParent() instanceof WXScroller) {
       return false;
     } else {
-      return isOuterRefreshableContainer(component.getParent());
+      return hasScrollParent(component.getParent());
     }
   }
 }
