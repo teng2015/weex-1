@@ -13,6 +13,7 @@ import com.taobao.weex.InitConfig;
 import com.taobao.weex.WXEnvironment;
 import com.taobao.weex.WXSDKEngine;
 import com.taobao.weex.common.WXException;
+import com.taobao.weex.http.WXStreamModule;
 
 public class WXApplication extends Application {
 
@@ -34,6 +35,9 @@ public class WXApplication extends Application {
       WXSDKEngine.registerComponent("richtext", RichText.class);
       WXSDKEngine.registerModule("render", RenderModule.class);
       WXSDKEngine.registerModule("event", WXEventModule.class);
+
+
+      WXSDKEngine.registerModule("stream", WXStreamModule.class);
 
       WXSDKEngine.registerModule("myModule", MyModule.class);
 

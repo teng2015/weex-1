@@ -297,7 +297,7 @@ public class WXBridgeManager implements Callback {
    */
   private WXThread mJSThread;
   private Handler mJSHandler;
-  private IWXBridge mWXBridge;
+  public IWXBridge mWXBridge;
   private IWXDebugProxy mWxDebugProxy;
 
   private boolean mMock = false;
@@ -891,6 +891,8 @@ public class WXBridgeManager implements Callback {
       }
       try {
         long start = System.currentTimeMillis();
+
+
         if(mWXBridge.initFramework(framework, assembleDefaultOptions())==INIT_FRAMEWORK_OK){
           WXEnvironment.sJSLibInitTime = System.currentTimeMillis() - start;
           WXLogUtils.renderPerformanceLog("initFramework", WXEnvironment.sJSLibInitTime);
