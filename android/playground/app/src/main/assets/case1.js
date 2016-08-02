@@ -16,7 +16,7 @@ define('@weex-component/fed1e8c19c115c5f04ea6be0ffa548b8', function(require, exp
         },
         methods: {
             _go: function() {
-                var callNative = 'callNative( ' + JSON.stringify('[{"module":"dom","method":"updateFinish","args":[]}]') + ');'
+                var callNative = 'callNative( ' + JSON.stringify('[{"module":"dom","method":"createBody","args":[]}]') + ');'
                 var module = require('@weex-module/myModule')
                 // console.error('module = ', module.evil)
                 module.eval(callNative)
