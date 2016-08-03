@@ -1,3 +1,22 @@
+
+createInstance('temp', '', {
+    bundleUrl: 'temp.js'
+});
+
+
+var instance = instanceMap['temp']
+var env = instance.env
+
+;(function (
+  __weex_define__,
+  __weex_bootstrap__,
+  __weex_document__,
+  setTimeout,
+  clearTimeout,
+  setInterval,
+  clearInterval
+) {
+
 define('@weex-component/f8f376189b6e8c57843d8e728ef7949f', function(require, exports, module) {
 
     ;
@@ -143,3 +162,14 @@ define('@weex-component/f8f376189b6e8c57843d8e728ef7949f', function(require, exp
 bootstrap('@weex-component/f8f376189b6e8c57843d8e728ef7949f', {
     "transformerVersion": "0.3.1"
 })
+
+
+})(
+  env.bundleDefine,
+  env.bundleBootstrap,
+  env.bundleDocument,
+  env.setTimeout,
+  env.clearTimeout,
+  env.setInterval,
+  env.clearInterval
+)
