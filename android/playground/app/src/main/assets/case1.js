@@ -1,6 +1,6 @@
 
 
-createInstance('temp', '', {
+createInstance('temp', '10', {
     bundleUrl: 'temp.js'
 });
 

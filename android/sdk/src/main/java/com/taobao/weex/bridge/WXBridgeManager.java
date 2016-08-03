@@ -1079,14 +1079,14 @@ public class WXBridgeManager implements Callback {
                    + ", exception function:" + function + ", exception:"
                    + exception);
     }
-    WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(
-        instanceId);
-    if (instance != null) {
-      // TODO add errCode
-      instance.onJSException(null, function, exception);
-    }
-    WXErrorCode.WX_ERR_JS_EXECUTE.appendErrMsg(exception);
-    commitJSBridgeAlarmMonitor(instanceId, WXErrorCode.WX_ERR_JS_EXECUTE);
+//    WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(
+//        instanceId);
+//    if (instance != null) {
+//      // TODO add errCode
+//      instance.onJSException(null, function, exception);
+//    }
+//    WXErrorCode.WX_ERR_JS_EXECUTE.appendErrMsg(exception);
+//    commitJSBridgeAlarmMonitor(instanceId, WXErrorCode.WX_ERR_JS_EXECUTE);
   }
 
   public static class TimerInfo {

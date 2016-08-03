@@ -15,19 +15,19 @@ public class WXEventModule extends WXModule {
 
   private static final String WEEX_CATEGORY = "com.taobao.android.intent.category.WEEX";
 
-  @WXModuleAnno(moduleMethod = true,runOnUIThread = true)
+  @WXModuleAnno(moduleMethod = true,runOnUIThread = false)
   public void openURL(String url) {
     if (TextUtils.isEmpty(url)) {
       return;
     }
-    String scheme = Uri.parse(url).getScheme();
-    StringBuilder builder = new StringBuilder();
-    if (TextUtils.equals("http",scheme) || TextUtils.equals("https",scheme) || TextUtils.equals("file",scheme)) {
-      builder.append(url);
-    } else {
-      builder.append("http:");
-      builder.append(url);
-    }
+//    String scheme = Uri.parse(url).getScheme();
+//    StringBuilder builder = new StringBuilder();
+//    if (TextUtils.equals("http",scheme) || TextUtils.equals("https",scheme) || TextUtils.equals("file",scheme)) {
+//      builder.append(url);
+//    } else {
+//      builder.append("http:");
+//      builder.append(url);
+//    }
 
 //    Uri uri = Uri.parse(builder.toString());
 //    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
