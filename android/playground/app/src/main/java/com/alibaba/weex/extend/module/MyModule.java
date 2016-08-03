@@ -11,16 +11,17 @@ import java.security.Timestamp;
 
 public class MyModule extends WXModule {
 
-  @WXModuleAnno(runOnUIThread = true)
+  @WXModuleAnno(runOnUIThread =false)
   public void printLog(String msg) {
     Toast.makeText(mWXSDKInstance.getContext(),msg,Toast.LENGTH_SHORT).show();
 
   }
 
-  @WXModuleAnno(moduleMethod = true,runOnUIThread = true)
+  @WXModuleAnno(moduleMethod = true,runOnUIThread =false)
   public void eval(String bundle) {
     Long t1 = System.currentTimeMillis();
     Log.e("weex", "weex ----------------------------------------- = " + t1.toString());
+    Log.e("weex", "weex ----------------------------------------- = " + bundle);
     WXBridgeManager.getInstance().mWXBridge.evalJavaScript(bundle);
     Long t2 = System.currentTimeMillis();
     Long result = t2 - t1;
