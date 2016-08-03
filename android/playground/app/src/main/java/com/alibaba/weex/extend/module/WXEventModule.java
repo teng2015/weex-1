@@ -3,6 +3,7 @@ package com.alibaba.weex.extend.module;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alibaba.weex.IndexActivity;
 import com.taobao.weex.bridge.WXBridgeManager;
@@ -33,9 +34,9 @@ public class WXEventModule extends WXModule {
 //    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 //    intent.addCategory(WEEX_CATEGORY);
 //    mWXSDKInstance.getContext().startActivity(intent);
+    String[] parts = url.split("/");
+    String path = parts[parts.length-1];
 
-
-
-    WXBridgeManager.getInstance().mWXBridge.evalJavaScript(WXFileUtils.loadFileContent("case1.js", mWXSDKInstance.getContext()));
+    WXBridgeManager.getInstance().mWXBridge.evalJavaScript(WXFileUtils.loadFileContent(path, mWXSDKInstance.getContext()));
   }
 }

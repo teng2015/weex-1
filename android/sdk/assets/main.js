@@ -38,6 +38,8 @@
     return to;
   };
 })();
+var it = 0;
+var bt = 0;
 
 (this.nativeLog || function(s) {console.log(s)})('START JS FRAMEWORK: 0.15.1 Build 20160725');
 /******/ (function(modules) { // webpackBootstrap
@@ -2260,6 +2262,8 @@
 	global.instanceMap = {};
 
 	function createInstance(id, code, config, data) {
+      var s = Date.now();
+      it = s;
 	  var info = instanceMap[id];
 	  if (!info) {
 	    info = checkVersion(code) || {};
@@ -2270,7 +2274,12 @@
 	    config = config || {};
 	    config.bundleVersion = info.version;
 	    console.debug('[JS Framework] create an ' + info.framework + '@' + config.bundleVersion + ' instance from ' + config.bundleVersion);
-	    return _config2.default[info.framework].createInstance(id, code, config, data);
+
+	   var r = _config2.default[info.framework].createInstance(id, code, config, data);
+       console.log('Instance ' + (Date.now() - s));
+       console.log('Body '+ (bt-it))
+
+       return r;
 	  }
 	  return new Error('invalid instance id "' + id + '"');
 	}
@@ -6436,6 +6445,7 @@
 	 * @param  {string} type
 	 */
 	function createBody(vm, type) {
+        bt = Date.now()
 	  var doc = vm._app.doc;
 	  return doc.createBody(type);
 	}

@@ -1,11 +1,7 @@
-
-createInstance('temp', '', {
-    bundleUrl: 'temp.js'
-});
-
-
+createInstance('temp' + new Date().getTime(), '', { bundleUrl: 'temp.js'});
 var instance = instanceMap['temp']
 var env = instance.env
+
 
 ;(function (
   __weex_define__,
@@ -16,6 +12,8 @@ var env = instance.env
   setInterval,
   clearInterval
 ) {
+var define = __weex_define__
+var bootstrap = __weex_bootstrap__
 
 define('@weex-component/f8f376189b6e8c57843d8e728ef7949f', function(require, exports, module) {
 
