@@ -1,10 +1,8 @@
 
-
-createInstance('temp' + new Date().getTime(), '', { bundleUrl: 'temp.js'});
-var instance = instanceMap['temp']
+var _instanceId = 'temp' + new Date().getTime()
+createInstance(_instanceId, '', { bundleUrl: 'temp.js'});
+var instance = instanceMap[_instanceId]
 var env = instance.env
-
-
 ;(function (
   __weex_define__,
   __weex_bootstrap__,
